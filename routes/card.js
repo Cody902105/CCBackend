@@ -175,7 +175,7 @@ router.get('/addOwned', async (req,res) => {
         res.json({message:err});
     }
 });
-//Returnes json {cards: [Cards]}.
+//Returnes json {cards: [Cards]}. Type Array[Objects]
 router.get('/search', async (req,res) => {
     try{
         var searchReturn = applyFilters(req.query);
