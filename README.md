@@ -13,3 +13,5 @@ Things I still need to add are:
 You'll need to add a .env file with DATABASE_CONNECTION_STRING=<Your mongodb connection string>. This all fits inside a free cluster and my goal is to make sure it will always fit in. But we shall see.
 
 Hope someone uses this, if you want more things added just add a issue and I'll see if I can add it.
+
+  npm start
