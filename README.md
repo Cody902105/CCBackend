@@ -9,8 +9,9 @@ Things I still need to add are:
   -Pricing
   -Unique name filter
   -I'll add a licence thats open source like MIT or APACHE
+  -Documentation for API endpoints
   
-You'll need to add a .env file with DATABASE_CONNECTION_STRING=<Your mongodb connection string>. This all fits inside a free cluster in mongodb Atlas and my goal is to make sure it will always fit in. But we shall see, at the rate of secret lairs we never know xD.
+You'll need to add a .env file with DATABASE_CONNECTION_STRING=<Your mongodb connection string>. This all fits inside a free cluster in mongodb Atlas and my goal is to make sure it will always fit in. But we shall see, at the rate of secret lairs we never know.
 
 Hope someone uses this, if you want more things added just add a issue and I'll see if I can add it.
 
