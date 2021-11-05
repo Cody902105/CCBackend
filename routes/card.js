@@ -268,6 +268,16 @@ router.get('/keywords', async (req,res) => {
         res.json({message : err});
     }
 });
+//Returns json {returnCount : int}. The number of total cards in the query
+router.get('/count', async (req,res) => {
+    try{
+        var searchReturn = applyFilters(req.query);
+        searchReturn = await searchReturn.count().exec();
+        res.json({returnCount: searchReturn});
+    }catch(err){
+        res.json({message: err});
+    }
+});
 //Over arching query function implimented by all functions to host filtering
 function applyFilters(query) {
     try{
