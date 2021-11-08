@@ -183,6 +183,7 @@ router.get('/search', async (req,res) => {
             searchReturn = searchReturn.sort({$natural : -1});
         }
         searchReturn = await searchReturn.limit(PAGE_SIZE).exec();
+        //console.log(searchReturn);
         res.json({cards: searchReturn});
     }catch(err){
         res.json({message: err});
