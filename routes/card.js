@@ -2,6 +2,136 @@ const express = require('express');
 const router = express.Router();
 const Card = require('../models/Card');
 const PAGE_SIZE = 102;
+const GROUP_FUNCT = 
+    {
+      '$group': {
+        '_id': '$name', 
+        'identifiers': {
+          '$first': '$identifiers'
+        }, 
+        'legalities': {
+          '$first': '$legalities'
+        }, 
+        'purchaseUrls': {
+          '$first': '$purchaseUrls'
+        }, 
+        'artist': {
+          '$first': '$artist'
+        }, 
+        'availability': {
+          '$first': '$availability'
+        }, 
+        'borderColor': {
+          '$first': '$borderColor'
+        }, 
+        'colorIdentity': {
+          '$first': '$colorIdentity'
+        }, 
+        'colorIndicator': {
+          '$first': '$colorIndicator'
+        }, 
+        'colors': {
+          '$first': '$colors'
+        }, 
+        'convertedManaCost': {
+          '$first': '$convertedManaCost'
+        }, 
+        'edhrecRank': {
+          '$first': '$edhrecRank'
+        }, 
+        'flavorText': {
+          '$first': '$flavorText'
+        }, 
+        'foreignData': {
+          '$first': '$foreignData'
+        }, 
+        'frameEffects': {
+          '$first': '$frameEffects'
+        }, 
+        'frameVersion': {
+          '$first': '$frameVersion'
+        }, 
+        'hasFoil': {
+          '$first': '$hasFoil'
+        }, 
+        'hasNonFoil': {
+          '$first': '$hasNonFoil'
+        }, 
+        'isReserved': {
+          '$first': '$isReserved'
+        }, 
+        'keywords': {
+          '$first': '$keywords'
+        }, 
+        'layout': {
+          '$first': '$layout'
+        }, 
+        'leadershipSkills': {
+          '$first': '$leadershipSkills'
+        }, 
+        'manaCost': {
+          '$first': '$manaCost'
+        }, 
+        'name': {
+          '$first': '$name'
+        }, 
+        'number': {
+          '$first': '$number'
+        }, 
+        'originalText': {
+          '$first': '$originalText'
+        }, 
+        'originalType': {
+          '$first': '$originalType'
+        }, 
+        'otherFaceIds': {
+          '$first': '$otherFaceIds'
+        }, 
+        'power': {
+          '$first': '$power'
+        }, 
+        'printings': {
+          '$first': '$printings'
+        }, 
+        'promoTypes': {
+          '$first': '$promoTypes'
+        }, 
+        'rarity': {
+          '$first': '$rarity'
+        }, 
+        'rulings': {
+          '$first': '$rulings'
+        }, 
+        'setCode': {
+          '$first': '$setCode'
+        }, 
+        'subtypes': {
+          '$first': '$subtypes'
+        }, 
+        'supertypes': {
+          '$first': '$supertypes'
+        }, 
+        'text': {
+          '$first': '$text'
+        }, 
+        'toughness': {
+          '$first': '$toughness'
+        }, 
+        'type': {
+          '$first': '$type'
+        }, 
+        'types': {
+          '$first': '$types'
+        }, 
+        'uuid': {
+          '$first': '$uuid'
+        }, 
+        'variations': {
+          '$first': '$variations'
+        }
+      }
+    }
+  ;
 //Returnes json {cards: [Cards]}. limited by 20 
 router.get('/', async (req,res) =>{
     try{
@@ -179,13 +309,24 @@ router.get('/addOwned', async (req,res) => {
 router.get('/search', async (req,res) => {
     try{
         var searchReturn = applyFilters(req.query);
-        if (!req.query.text){
+        if (!req.query.text && !req.query.unique){
             searchReturn = searchReturn.sort({$natural : -1});
         }
-        //console.log(searchReturn.getFilter());
-        searchReturn = await searchReturn.limit(PAGE_SIZE).exec();
-        //console.log(searchReturn);
-        res.json({cards: searchReturn});
+        if (req.query.unique){
+            searchReturn = searchReturn.limit(PAGE_SIZE);
+            var matchQuery = searchReturn.getFilter();
+            var searchFunction = [{'$match': matchQuery}];
+            searchFunction.push(GROUP_FUNCT);
+            if(req.query.next > 0){
+                searchFunction.push({'$skip': req.query.next});
+            }
+            searchFunction.push({'$limit': PAGE_SIZE});
+            var uniqueSearch = await Card.aggregate(searchFunction).allowDiskUse(true).exec();
+            res.json({cards: uniqueSearch});
+        }else{
+            searchReturn = await searchReturn.limit(PAGE_SIZE).exec();
+            res.json({cards: searchReturn});
+        }
     }catch(err){
         res.json({message: err});
     }
@@ -274,10 +415,21 @@ router.get('/keywords', async (req,res) => {
 router.get('/count', async (req,res) => {
     try{
         var searchReturn = applyFilters(req.query);
-        searchReturn = await searchReturn.count().exec();
-        res.json({returnCount: searchReturn});
+        if (req.query.unique){
+            searchReturn = searchReturn.limit(PAGE_SIZE);
+            var matchQuery = searchReturn.getFilter();
+            var searchFunction = [{'$match': matchQuery}];
+            searchFunction.push(GROUP_FUNCT);
+            searchFunction.push({'$count' : 'returnCount'});
+            var uniqueSearch = await Card.aggregate(searchFunction).allowDiskUse(true).exec();
+            res.json(uniqueSearch[0]);
+        }else{
+                searchReturn = await searchReturn.count().exec();
+                res.json({returnCount: searchReturn});
+            }
     }catch(err){
         res.json({message: err});
+        console.log(err);
     }
 });
 //Over arching query function implimented by all functions to host filtering
@@ -362,7 +514,7 @@ function applyFilters(query) {
         searchReturn = searchReturn.where('keywords').equals(query.keywords);
     }
     if (query.legalities){//key must be capatalized for some reason
-        searchReturn = searchReturn.where('legalities.'+ query.legalities.toLowerCase()).ne('Banned');
+        searchReturn = searchReturn.where('legalities.'+ query.legalities.toLowerCase()).equals('Legal');
     }
     if (query.next && query.next > 0){
         searchReturn = searchReturn.skip((query.next*PAGE_SIZE));
