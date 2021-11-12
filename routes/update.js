@@ -27,7 +27,7 @@ router.get('/', async (req,res) =>{
 //Returns the number of updated and new cards. Updates the card database
 router.get('/exc', async (req,res) =>{
     try{
-        request('https://mtgjson.com/api/v5/AllPrintings.json', {json: true}, async (err, resR, body) => {
+       request('https://mtgjson.com/api/v5/AllPrintings.json', {json: true}, async (err, resR, body) => {
         if (err){
                 return console.log(err); 
             }else{
@@ -35,7 +35,7 @@ router.get('/exc', async (req,res) =>{
                     console.log("Starting update check");
                     const needUpdate = await Info.exists({version: body.meta.version});
                     if (!needUpdate) {
-                        var listRemoved = await Card.deleteMany({setCode : "PLIST", owned : { $lt : 1 }});
+                        var plistRemoved = await Card.deleteMany({setCode : "PLIST", owned : { $lt : 1 }});
                         console.log("Begining Update Process");
                         var updatedCards = 0;
                         var newCards = 0;
@@ -62,13 +62,13 @@ router.get('/exc', async (req,res) =>{
                         });
                     }else{
                         console.log("Update not nessisary");
-                        res.json({message: "Already up to date"})
+                        res.json({message: "Already up to date"});
                     }
                 }catch(bigbaderr){
                     res.json({message: bigbaderr + " some"});
                 }
             }
-        });
+        }); 
     }catch(err){
         res.json({message: err});
     }
