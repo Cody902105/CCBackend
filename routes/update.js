@@ -73,5 +73,8 @@ router.get('/exc', async (req,res) =>{
         res.json({message: err});
     }
 });
-
+router.get('/prices', async (req,res) =>{
+    //this is where pricing will be
+    res.json({message: 'content not avalable'});
+});
 module.exports = router;
