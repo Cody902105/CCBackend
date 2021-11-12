@@ -27,7 +27,7 @@ router.get('/', async (req,res) =>{
 //Returns the number of updated and new cards. Updates the card database
 router.get('/exc', async (req,res) =>{
     try{
-       request('https://mtgjson.com/api/v5/AllPrintings.json', {json: true}, async (err, resR, body) => {
+        request('https://mtgjson.com/api/v5/AllPrintings.json', {json: true}, async (err, resR, body) => {
         if (err){
                 return console.log(err); 
             }else{
