@@ -318,7 +318,8 @@ router.get('/search', async (req,res) => {
             var searchFunction = [{'$match': matchQuery}];
             searchFunction.push(GROUP_FUNCT);
             if(req.query.next > 0){
-                searchFunction.push({'$skip': req.query.next});
+              var skipping = req.query.next * PAGE_SIZE;
+              searchFunction.push({'$skip': skipping});
             }
             searchFunction.push({'$limit': PAGE_SIZE});
             var uniqueSearch = await Card.aggregate(searchFunction).allowDiskUse(true).exec();
