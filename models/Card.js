@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 
 const CardSchema = mongoose.Schema({
+    price: {
+        type: Number,
+        required : false
+    },
     owned: {
         type: Number,
         required: false
