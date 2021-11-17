@@ -1,5 +1,6 @@
 const express = require('express');
 const request = require('request');
+const fs = require('fs');
 const router = express.Router();
 const Info = require('../models/Info');
 const Card = require('../models/Card');
