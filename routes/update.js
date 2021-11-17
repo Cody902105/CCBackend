@@ -77,8 +77,22 @@ router.get('/exc', async (req,res) =>{
 router.get('/prices', async (req,res) =>{
     //this is where pricing will be
     try{
-        console.log('Prices Updated');
-        res.json({message: 'prices updated'});
+        const jsonPrices = await fs.readFileSync("./AllPrices.json");
+        //console.log(jsonPrices);
+        //console.log(jsonPrices.length);
+        var step = 0;
+        var count = 0;
+        while (jsonPrices.indexOf('}}}}}', step) < (jsonPrices.length - 7)){
+            var nextStep = jsonPrices.indexOf('}}}}}', step) + 6;
+            console.log(jsonPrices.indexOf('}}}}}', step));
+            var ThisCardbuf = jsonPrices.slice(step,nextStep);
+            var ThisCard = ThisCardbuf.toString();
+            //console.log('\n\n' + ThisCard);
+            count++;
+            step = nextStep;
+        } 
+        console.log(count);
+        res.json({message: 'wedidit'});
     }catch(bigbaderr){
         console.log('Prices Failed to update');
         res.json({message: bigbaderr});
