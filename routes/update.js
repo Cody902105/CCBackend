@@ -75,6 +75,12 @@ router.get('/exc', async (req,res) =>{
 });
 router.get('/prices', async (req,res) =>{
     //this is where pricing will be
-    res.json({message: 'content not avalable'});
+    try{
+        console.log('Prices Updated');
+        res.json({message: 'prices updated'});
+    }catch(bigbaderr){
+        console.log('Prices Failed to update');
+        res.json({message: bigbaderr});
+    }
 });
 module.exports = router;
