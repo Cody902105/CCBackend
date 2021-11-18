@@ -77,6 +77,7 @@ router.get('/exc', async (req,res) =>{
         res.json({message: err});
     }
 });
+//Returns the number of updated and and abandoned card prices. Updates the card database
 router.get('/prices', async (req,res) =>{
     //this is where pricing will be
     console.log("Begining pricing update");
@@ -133,9 +134,15 @@ function getPrice(data){
                 if(data["currency"] !== undefined){
                     if(data["currency"] === 'USD') {
                         cardPrice = (cardPrice * USD_RATE).toFixed(2);
+                        if (cardPrice < 0.01){
+                            cardPrice = 0.01;
+                        }
                         return cardPrice;
                     }else{
                         cardPrice = (cardPrice * EURO_RATE).toFixed(2);
+                        if (cardPrice < 0.01){
+                            cardPrice = 0.01;
+                        }
                         return cardPrice;
                     }
                 }
@@ -154,9 +161,15 @@ function getPrice(data){
                 if(data["currency"] !== undefined){
                     if(data["currency"] === 'USD') {
                         cardPrice = (cardPrice * USD_RATE).toFixed(2);
+                        if (cardPrice < 0.01){
+                            cardPrice = 0.01;
+                        }
                         return cardPrice;
                     }else{
                         cardPrice = (cardPrice * EURO_RATE).toFixed(2);
+                        if (cardPrice < 0.01){
+                            cardPrice = 0.01;
+                        }
                         return cardPrice;
                     }
                 }
