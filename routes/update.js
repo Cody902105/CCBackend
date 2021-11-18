@@ -4,6 +4,8 @@ const fs = require('fs');
 const router = express.Router();
 const Info = require('../models/Info');
 const Card = require('../models/Card');
+const EURO_RATE = 0.84;
+const USD_RATE = 0.74;
 //Returns a true or false if there is a version discrepency between 'https://mtgjson.com/api/v5/Meta.json' and the meta version of our database
 router.get('/', async (req,res) =>{
     try{
@@ -71,31 +73,98 @@ router.get('/exc', async (req,res) =>{
             }
         }); 
     }catch(err){
+        console.log('failed to update: '+ err)
         res.json({message: err});
     }
 });
 router.get('/prices', async (req,res) =>{
     //this is where pricing will be
+    console.log("Begining pricing update");
     try{
         const jsonPrices = await fs.readFileSync("./AllPrices.json");
-        //console.log(jsonPrices);
-        //console.log(jsonPrices.length);
-        var step = 0;
+        var step = 71;
         var count = 0;
+        var totalCount = 0;
         while (jsonPrices.indexOf('}}}}}', step) < (jsonPrices.length - 7)){
             var nextStep = jsonPrices.indexOf('}}}}}', step) + 6;
-            console.log(jsonPrices.indexOf('}}}}}', step));
-            var ThisCardbuf = jsonPrices.slice(step,nextStep);
-            var ThisCard = ThisCardbuf.toString();
-            //console.log('\n\n' + ThisCard);
-            count++;
+            var ThisCardbuf = jsonPrices.slice(step,nextStep-1);
+            var ThisCardstr = ThisCardbuf.toString();
+            var ThisCardJson = JSON.parse("{"+ThisCardstr+"}");
+            var cardUUID = Object.keys(ThisCardJson)[0];
+            var cardExists = await Card.exists({uuid: cardUUID});
+            totalCount++;
+            if (cardExists){
+                if(ThisCardJson[cardUUID]["paper"] !== undefined){
+                    if(ThisCardJson[cardUUID]["paper"]["cardmarket"] !== undefined){
+                        var cardPrice = getPrice(ThisCardJson[cardUUID]["paper"]["cardmarket"]);
+                        Card.updateOne({uuid : cardUUID},{price : cardPrice});
+                        count++;
+                    }else if(ThisCardJson[cardUUID]["paper"]["cardkingdom"] !== undefined){
+                        var cardPrice = getPrice(ThisCardJson[cardUUID]["paper"]["cardkingdom"]);
+                        Card.updateOne({uuid : cardUUID},{price : cardPrice});
+                        count++;
+                    }
+                }else if(ThisCardJson[cardUUID]["mtgo"]["cardhoarder"] !== undefined){
+                    var cardPrice = getPrice(ThisCardJson[cardUUID]["mtgo"]["cardhoarder"]);
+                    Card.updateOne({uuid : cardUUID},{price : cardPrice});
+                    count++;
+                }
+            }
             step = nextStep;
         } 
-        console.log(count);
-        res.json({message: 'wedidit'});
+        console.log('Card prices Updated: ' + count + ', Total Cards: ' + totalCount);
+        res.json({message: ' Cards prices updated ' + count});
     }catch(bigbaderr){
-        console.log('Prices Failed to update');
+        console.log('Prices Failed to update: ' + bigbaderr);
         res.json({message: bigbaderr});
     }
 });
+function getPrice(data){
+    if (data["retail"] !== undefined) {
+        if (data["retail"]["normal"] !== undefined){
+            var avgInt = 0;
+            var avgAddition = 0;
+            for (dates in data["retail"]["normal"]){
+                avgAddition += data["retail"]["normal"][dates];
+                avgInt++;
+            }
+            if(avgInt != 0){
+                var cardPrice = avgAddition / avgInt;
+                if(data["currency"] !== undefined){
+                    if(data["currency"] === 'USD') {
+                        cardPrice = (cardPrice * USD_RATE).toFixed(2);
+                        return cardPrice;
+                    }else{
+                        cardPrice = (cardPrice * EURO_RATE).toFixed(2);
+                        return cardPrice;
+                    }
+                }
+            }
+            return 0;
+        }
+        else if(data["retail"]["foil"] !== undefined){
+            var avgInt = 0;
+            var avgAddition = 0;
+            for (dates in data["retail"]["foil"]){
+                avgAddition += data["retail"]["foil"][dates];
+                avgInt++;
+            }
+            if(avgInt != 0){
+                var cardPrice = avgAddition / avgInt;
+                if(data["currency"] !== undefined){
+                    if(data["currency"] === 'USD') {
+                        cardPrice = (cardPrice * USD_RATE).toFixed(2);
+                        return cardPrice;
+                    }else{
+                        cardPrice = (cardPrice * EURO_RATE).toFixed(2);
+                        return cardPrice;
+                    }
+                }
+            }
+            return 0;
+        }
+    }else{
+        return 0;
+    }
+} 
 module.exports = router;
