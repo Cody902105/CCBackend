@@ -6,8 +6,6 @@ Huge thanks go out to MTG Json as they provide all the data.
 
 Things I still need to add are:
   -Custom Tags (For binders and decks)
-  -Pricing
-  -Unique name filter
   -I'll add a licence thats open source like MIT or APACHE
   -Documentation for API endpoints
   
