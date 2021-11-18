@@ -15,6 +15,9 @@ const GROUP_FUNCT =
         'purchaseUrls': {
           '$first': '$purchaseUrls'
         }, 
+        'price': {
+          '$first': '$price'
+        },
         'artist': {
           '$first': '$artist'
         }, 
