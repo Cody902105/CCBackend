@@ -105,6 +105,10 @@ router.get('/prices', async (req,res) =>{
                         var cardPrice = getPrice(ThisCardJson[cardUUID]["paper"]["cardmarket"]);
                         var some = await Card.updateOne({uuid : cardUUID},{price : cardPrice});
                         count++;
+                    }else if(ThisCardJson[cardUUID]["paper"]["tcgplayer"] !== undefined){
+                        var cardPrice = getPrice(ThisCardJson[cardUUID]["paper"]["tcgplayer"]);
+                        var some = await Card.updateOne({uuid : cardUUID},{price : cardPrice});
+                        count++;
                     }
                 }else if(ThisCardJson[cardUUID]["mtgo"]["cardhoarder"] !== undefined){
                     var cardPrice = getPrice(ThisCardJson[cardUUID]["mtgo"]["cardhoarder"]);
