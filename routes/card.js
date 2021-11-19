@@ -312,14 +312,28 @@ router.get('/addOwned', async (req,res) => {
 router.get('/search', async (req,res) => {
     try{
         var searchReturn = applyFilters(req.query);
-        if (!req.query.text && !req.query.unique){
-            searchReturn = searchReturn.sort({$natural : -1});
+        if (!req.query.text && !req.query.unique && !req.query.price){
+          searchReturn = searchReturn.sort({$natural : -1});
+        }
+        if (req.query.price && !req.query.unique){
+          if(req.query.price === "1"){
+            searchReturn = searchReturn.sort({price : 1});
+          }else{
+            searchReturn = searchReturn.sort({price : -1});
+          }
         }
         if (req.query.unique){
             searchReturn = searchReturn.limit(PAGE_SIZE);
             var matchQuery = searchReturn.getFilter();
             var searchFunction = [{'$match': matchQuery}];
             searchFunction.push(GROUP_FUNCT);
+            if (req.query.price && !req.query.unique){
+              if(req.query.price === "1"){
+                searchFunction.push({$sort:{price : 1}})
+              }else{
+                searchFunction.push({$sort:{price : -1}})
+              }
+            }
             if(req.query.next > 0){
               var skipping = req.query.next * PAGE_SIZE;
               searchFunction.push({'$skip': skipping});
@@ -327,10 +341,10 @@ router.get('/search', async (req,res) => {
             searchFunction.push({'$limit': PAGE_SIZE});
             var uniqueSearch = await Card.aggregate(searchFunction).allowDiskUse(true).exec();
             res.json({cards: uniqueSearch});
-        }else{
+          }else{
             searchReturn = await searchReturn.limit(PAGE_SIZE).exec();
             res.json({cards: searchReturn});
-        }
+          }
     }catch(err){
         res.json({message: err});
     }
