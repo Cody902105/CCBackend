@@ -99,18 +99,15 @@ router.get('/prices', async (req,res) =>{
                 if(ThisCardJson[cardUUID]["paper"] !== undefined){
                     if(ThisCardJson[cardUUID]["paper"]["cardkingdom"] !== undefined){
                         var cardPrice = getPrice(ThisCardJson[cardUUID]["paper"]["cardkingdom"]);
-                        //console.log(cardPrice);
                         var some = await Card.updateOne({uuid : cardUUID},{price : cardPrice});
                         count++;
                     }else if(ThisCardJson[cardUUID]["paper"]["cardmarket"] !== undefined){
                         var cardPrice = getPrice(ThisCardJson[cardUUID]["paper"]["cardmarket"]);
-                        //console.log(cardPrice);
                         var some = await Card.updateOne({uuid : cardUUID},{price : cardPrice});
                         count++;
                     }
                 }else if(ThisCardJson[cardUUID]["mtgo"]["cardhoarder"] !== undefined){
                     var cardPrice = getPrice(ThisCardJson[cardUUID]["mtgo"]["cardhoarder"]);
-                    //console.log(cardPrice);
                     var some = await Card.updateOne({uuid : cardUUID},{price : cardPrice});
                     count++;
                 }
