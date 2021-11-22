@@ -327,7 +327,7 @@ router.get('/search', async (req,res) => {
             var matchQuery = searchReturn.getFilter();
             var searchFunction = [{'$match': matchQuery}];
             searchFunction.push(GROUP_FUNCT);
-            if (req.query.price && !req.query.unique){
+            if (req.query.price){
               if(req.query.price === "1"){
                 searchFunction.push({$sort:{price : 1}})
               }else{
