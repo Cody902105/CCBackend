@@ -83,17 +83,22 @@ router.get('/prices', async (req,res) =>{
     //this is where pricing will be
     console.log("Begining pricing update");
     try{
+        //Begining update Prices
         const jsonPrices = await fs.readFileSync("./AllPrices.json");
+        //Initial step is past the meta and other data
         var step = 71;
         var count = 0;
         var totalCount = 0;
+        //We are finding the index if the next end of object
         while (jsonPrices.indexOf('}}}}}', step) < (jsonPrices.length - 7)){
+            //We add 6 so we get the total end of object and parse to JSON
             var nextStep = jsonPrices.indexOf('}}}}}', step) + 6;
             var ThisCardbuf = jsonPrices.slice(step,nextStep-1);
             var ThisCardstr = ThisCardbuf.toString();
             var ThisCardJson = JSON.parse("{"+ThisCardstr+"}");
             var cardUUID = Object.keys(ThisCardJson)[0];
             var cardExists = await Card.exists({uuid: cardUUID});
+            //So we can compare the total documents in the file
             totalCount++;
             if (cardExists){
                 if(ThisCardJson[cardUUID]["paper"] !== undefined){
