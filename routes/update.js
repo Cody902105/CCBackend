@@ -1,6 +1,7 @@
 const express = require('express');
 const request = require('request');
 const fs = require('fs');
+const https = require('https');
 const router = express.Router();
 const Info = require('../models/Info');
 const Card = require('../models/Card');
@@ -84,7 +85,7 @@ router.get('/prices', async (req,res) =>{
     console.log("Begining pricing update");
     try{
         //Begining update Prices
-        const jsonPrices = await fs.readFileSync("./AllPrices.json");
+        const jsonPrices = fs.readFileSync("./AllPrices.json");
         //Initial step is past the meta and other data
         var step = 71;
         var count = 0;
