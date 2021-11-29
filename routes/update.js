@@ -6,8 +6,8 @@ const router = express.Router();
 const Info = require('../models/Info');
 const Card = require('../models/Card');
 //I work in pounds so this is the relative conversion rate
-const EURO_RATE = 0.84;
-const USD_RATE = 0.74;
+const EURO_RATE = 0.85;
+const USD_RATE = 0.75;
 //Returns a true or false if there is a version discrepency between 'https://mtgjson.com/api/v5/Meta.json' and the meta version of our database
 router.get('/', async (req,res) =>{
     try{
