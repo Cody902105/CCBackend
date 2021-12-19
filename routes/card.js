@@ -454,8 +454,10 @@ router.get('/count', async (req,res) => {
 function applyFilters(query) {
     try{
     var searchReturn = Card.find({});
-    if (query.text){
+    if (query.text && !query.price){
         searchReturn = Card.find({$text: {$search: query.text, $caseSensitive: false}}).sort({score:{$meta:"textScore"}});
+    }else if (query.text){
+      searchReturn = Card.find({$text: {$search: query.text, $caseSensitive: false}});
     }
     if (query.set){
         searchReturn = searchReturn.where('setCode').equals(query.set.toUpperCase());
