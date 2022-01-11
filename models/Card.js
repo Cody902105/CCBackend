@@ -9,6 +9,23 @@ const CardSchema = mongoose.Schema({
         type: Number,
         required: false
     },
+    cardParts : [String],
+    faceManaValue : Number,
+    finishes : {
+        type : [String],
+        required : true
+    },
+    manaValue : {
+        type : Number,
+        required : true
+    },
+    signature : String,
+    isFunny : Boolean,
+    isRebalanced : Boolean,
+    faceFlavorName : String,
+    originalPrintings : [String],
+    rebalancedPrintings : [String],
+    securityStamp : String,
     artist : {
         type: String,
         required: false
@@ -25,12 +42,7 @@ const CardSchema = mongoose.Schema({
         required: false
     },
     colors : [String],
-    convertedManaCost : Number,
     edhrecRank : {
-        type: Number,
-        required: false
-    },
-    faceConvertedManaCost : {
         type: Number,
         required: false
     },
@@ -80,12 +92,10 @@ const CardSchema = mongoose.Schema({
         type: Boolean,
         required: false
     },
-    hasFoil: Boolean,
     hasAlternativeDeckLimit: {
         type: Boolean,
         required: false
     },
-    hasNonFoil: Boolean,
     identifiers: 
     {
         cardKingdomFoilId: String,
