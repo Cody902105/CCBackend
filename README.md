@@ -15,3 +15,16 @@ You'll need to add a .env file with DATABASE_CONNECTION_STRING=<Your mongodb con
 Hope someone uses this, if you want more things added just add a issue and I'll see if I can add it.
 
   npm start
+
+# Routes
+  The following are all the routes that I am working on, and more or less what they do.
+## Brew
+  This is WIP but the idea is to be able to brew decks and view stats on the decks, check rulings and so on.
+## Card
+  This is the Main database endpoint, this is where you can add cards to the database, this follows the card.js model, this model looks quite similar to the MTG json card model.
+## Info
+  This endpoint gets the meta information of the dataset, when it was last updated an so on, this meta information will follow MTG json's
+## Roll
+  This is a new endpoint and is still being worked on, at the moment it has flip funtionality, for example when you use krark's thumb and need to flip 5 coins, this will just tell you how many wins you got.
+## Update
+  This also works hand in hand with the card and meta endpoints, these will update the dataset.
