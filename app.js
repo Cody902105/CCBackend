@@ -10,6 +10,7 @@ require('dotenv/config');
 const infoRoute = require('./routes/info');
 const cardRoute = require('./routes/card');
 const updateRoute = require('./routes/update');
+const brewRoute = require('/routes/brew.js');
 
 //Middleware
 app.use(cors());
@@ -18,6 +19,7 @@ app.use('/info', infoRoute);
 app.use('/card', cardRoute);
 app.use('/update',timeout(36000000));
 app.use('/update',updateRoute);
+app.use('/brew',brewRoute);
 
 //Connect to database
 mongoose.connect(process.env.DATABASE_CONNECTION_STRING, () => {
