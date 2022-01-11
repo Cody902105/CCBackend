@@ -46,5 +46,29 @@ router.get('/flip', async (req,res) => {
         res.json({result : err});
     }
 });
-
+//get function returnes dice rolls
+router.get('/roll', async (req,res) => {
+    try{
+        var die = 20; 
+        var number = 1;
+        var add = 1;
+        if (req.query.dice){
+            die = parseInt(req.query.dice);
+        }
+        if (req.query.number){
+            number = req.query.number;
+        }
+        if (req.query.add){
+            add = parseInt(req.query.add) + 1;
+        }
+        var rolls = [];
+        for (i = 0; i < number; i++) {
+            var roll = Math.floor(Math.random() * die) + add;
+            rolls.push(roll);    
+        }
+        res.json({message: rolls});
+    }catch(err){
+        res.json({message : err});
+    }
+});
 module.exports = router;
