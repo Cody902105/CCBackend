@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Card = require('../models/Card');
+const SetList = require('../models/SetList');
 const PAGE_SIZE = 102;
 const GROUP_FUNCT = 
     {
@@ -341,6 +342,15 @@ router.get('/sets', async (req,res) => {
     }catch(err){
         res.json({message : err});
     }
+});
+router.get('/keyruneCodes', async (req,res) => {
+  try{
+      var searchReturn = await SetList.find({"code":{$exists:true}},{"code":1, "keyruneCode":1,"_id" : 0});
+      console.log(searchReturn);
+      res.json({searchReturn});
+  }catch(err){
+      res.json({message : err});
+  }
 });
 //Returnes json {message: [Colors]}. All Colors
 router.get('/colors', async (req,res) => {
