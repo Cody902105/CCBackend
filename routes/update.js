@@ -5,6 +5,7 @@ const https = require('https');
 const router = express.Router();
 const Info = require('../models/Info');
 const Card = require('../models/Card');
+const SetList = require('../models/SetList');
 //I work in pounds so this is the relative conversion rate
 const EURO_RATE = 0.85;
 const USD_RATE = 0.75;
@@ -32,6 +33,26 @@ router.get('/', async (req,res) =>{
 //Returns the number of updated and new cards. Updates the card database
 router.get('/exc', async (req,res) =>{
     try{
+        request('https://mtgjson.com/api/v5/SetList.json', {json: true}, async (err, resR, body) => {
+            if (err){
+                return console.log(err);
+            }else{
+                console.log("Updating Sets")
+                var newSets = 0;
+                var updatedSets = 0;
+                for (const Sets in body.data){
+                    var newSet = await SetList.exists({code : body.data[Sets]["code"]});
+                    if (!newSet){
+                        var some = await SetList.create(body.data[Sets]);
+                        newSets++;
+                    }else{
+                        var some = await SetList.updateOne({code : body.data[Sets][code]},{$set:body.data[Sets]});
+                        updatedSets++;
+                    }
+                }
+                console.log("New Sets: " + newSets + " Updated Sets: " + updatedSets);
+            }
+        });
         request('https://mtgjson.com/api/v5/AllPrintings.json', {json: true}, async (err, resR, body) => {
         if (err){
                 return console.log(err); 

@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const InfoSchema = mongoose.Schema({
+const BrewSchema = mongoose.Schema({
     deck: {
         type: String,
         required: true
@@ -28,4 +28,4 @@ const InfoSchema = mongoose.Schema({
     
 });
 
-module.exports = mongoose.model('Brew', InfoSchema);
+module.exports = mongoose.model('Brew', BrewSchema);
