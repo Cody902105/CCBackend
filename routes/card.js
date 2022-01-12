@@ -343,11 +343,11 @@ router.get('/sets', async (req,res) => {
         res.json({message : err});
     }
 });
+//Returns json {message: [{code : "" , keyruneCode : ""}]}. All keyrune key value pairs
 router.get('/keyruneCodes', async (req,res) => {
   try{
       var searchReturn = await SetList.find({"code":{$exists:true}},{"code":1, "keyruneCode":1,"_id" : 0});
-      console.log(searchReturn);
-      res.json({searchReturn});
+      res.json({message : searchReturn});
   }catch(err){
       res.json({message : err});
   }
