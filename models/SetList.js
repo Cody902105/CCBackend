@@ -47,7 +47,7 @@ const SetSchema = mongoose.Schema({
         required : true
     },
     translations : {},
-    _type : {
+    type : {
         type : String,
         required : true
     }

@@ -46,7 +46,7 @@ router.get('/exc', async (req,res) =>{
                         var some = await SetList.create(body.data[Sets]);
                         newSets++;
                     }else{
-                        var some = await SetList.updateOne({code : body.data[Sets][code]},{$set:body.data[Sets]});
+                        var some = await SetList.updateOne({code : body.data[Sets]["code"]},{$set:body.data[Sets]});
                         updatedSets++;
                     }
                 }
