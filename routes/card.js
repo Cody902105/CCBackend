@@ -291,23 +291,6 @@ router.get('/', async (req,res) => {
         res.json({message: err + " is this error"});
     }
 });
-//get function returns patch results 
-router.get('/addOwned', async (req,res) => {
-    try{
-        if(req.query.uuid && req.query.add){
-            var patchResult = await Card.updateOne({uuid:req.query.uuid},{$inc : {'owned': 1}});
-            res.json(patchResult);
-            //console.log("adding");
-        }
-        if(req.query.uuid && req.query.remove){
-            var patchResult = await Card.updateOne({uuid:req.query.uuid},{$inc : {'owned': -1}});
-            res.json(patchResult);
-            //console.log("removing");
-        }
-    }catch(err){
-        res.json({message:err});
-    }
-});
 //Returnes json {cards: [Cards]}. Type Array[Objects]
 router.get('/search', async (req,res) => {
     try{
