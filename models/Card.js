@@ -5,10 +5,6 @@ const CardSchema = mongoose.Schema({
         type: Number,
         required : false
     },
-    owned: {
-        type: Number,
-        required: false
-    },
     cardParts : [String],
     faceManaValue : Number,
     finishes : {
