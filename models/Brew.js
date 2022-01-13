@@ -5,6 +5,11 @@ const BrewSchema = mongoose.Schema({
         type: String,
         required: true
     }, 
+    meta : {
+        format : String,
+        leader : String,
+        required: true
+    },
     uuid: {
         type: String,
         required: true
@@ -24,8 +29,10 @@ const BrewSchema = mongoose.Schema({
     finishes: {
         type: Array[String],
         required : false
+    },
+    tags : {
+        type : {}
     }
-    
 });
 
 module.exports = mongoose.model('Brew', BrewSchema);
