@@ -51,6 +51,10 @@ router.get('/exc', async (req,res) =>{
                     }
                 }
                 console.log("New Sets: " + newSets + " Updated Sets: " + updatedSets);
+                if (newSets > 0 ){
+                    var plistRemoved = await Card.deleteMany({setCode : "PLIST", owned : { $lt : 1 }});
+                }
+                console.log("List cards being updated");
             }
         });
         request('https://mtgjson.com/api/v5/AllPrintings.json', {json: true}, async (err, resR, body) => {
@@ -61,7 +65,6 @@ router.get('/exc', async (req,res) =>{
                     console.log("Starting update check");
                     const needUpdate = await Info.exists({version: body.meta.version});
                     if (!needUpdate) {
-                        var plistRemoved = await Card.deleteMany({setCode : "PLIST", owned : { $lt : 1 }});
                         console.log("Begining Update Process");
                         var updatedCards = 0;
                         var newCards = 0;
