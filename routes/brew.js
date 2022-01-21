@@ -113,7 +113,7 @@ router.get('/remove', async (req,res) => {
     }
 });
 //removes a deck
-router.get('/remove', async (req,res) => {
+router.get('/removeDeck', async (req,res) => {
     try{
         if(req.query.deckName){
             var some = await Brew.remove({deck:req.query.DeckName});
