@@ -8,19 +8,19 @@ const BrewSchema = mongoose.Schema({
     meta : {
         format : String,
         leader : String,
-        required: true
+        required: false
     },
     uuid: {
         type: String,
-        required: true
+        required: false
     },
     name : {
         type: String, 
-        required: true
+        required: false
     },
     ammount: {
         type: Number,
-        require: true
+        require: false
     },
     set: {
         type: String,
