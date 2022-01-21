@@ -27,7 +27,7 @@ const BrewSchema = mongoose.Schema({
         required : false
     },
     finishes: {
-        type: Array[String],
+        type: [String],
         required : false
     },
     tags : {
