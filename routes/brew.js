@@ -64,6 +64,11 @@ router.get('/add', async (req,res) => {
         if(req.query.finishes){
             additionObject = additionObject ,{finishes: req.query.finishes};
         }
+        if(req.query.imgURLFront && req.query.imgURLBack){
+            additionObject = additionObject ,{imgUrl: { front : req.query.imgURLFront, back : req.query.imgURLBack}};
+        }else if(req.query.imgURLFront){
+            additionObject = additionObject ,{imgUrl: { front : req.query.imgURLFront}};
+        }
         if(req.query.tags){
             additionObject = additionObject ,{tags: req.query.tags};
         }

@@ -26,6 +26,13 @@ const BrewSchema = mongoose.Schema({
         type: String,
         required : false
     },
+    imgUrl : {
+        front: String,
+        back: {
+            type : String,
+            required : false
+        }
+    },
     finishes: {
         type: [String],
         required : false
