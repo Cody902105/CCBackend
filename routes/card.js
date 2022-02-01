@@ -352,6 +352,17 @@ router.get('/keyruneCodes', async (req,res) => {
       res.json({message : err});
   }
 });
+router.get('/setName', async (req,res) => {
+  try{
+        if(req.query.code){
+          var code = req.query.code.toUpperCase();
+          var searchReturn = await SetList.findOne({"code": code},{"name":1, "_id" : 0});
+          res.json({message : searchReturn});
+        } 
+  }catch(err){
+      res.json({message : err});
+  }
+});
 //Returnes json {message: [Colors]}. All Colors
 router.get('/colors', async (req,res) => {
     try{
