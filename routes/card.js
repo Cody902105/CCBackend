@@ -354,11 +354,12 @@ router.get('/keyruneCodes', async (req,res) => {
 });
 router.get('/setName', async (req,res) => {
   try{
+      searchReturn = "";
         if(req.query.code){
           var code = req.query.code.toUpperCase();
           var searchReturn = await SetList.findOne({"code": code},{"name":1, "_id" : 0});
-          res.json({message : searchReturn});
         } 
+      res.json({message : searchReturn});
   }catch(err){
       res.json({message : err});
   }
