@@ -1,4 +1,6 @@
-/.env
 /node_modules
+
+/.env
+
 /build
 /AllPrices.json
