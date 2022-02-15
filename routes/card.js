@@ -292,7 +292,7 @@ router.get('/', async (req,res) => {
         res.json({message: err + " is this error"});
     }
 });
-//Returnes json {cards: [Cards]}. Type Array[Objects]
+//Returnes json {cards: [Cards]}. Type Array[Objects] err returns a blank array to avoid crashes
 router.get('/search', async (req,res) => {
     try{
         var searchReturn = applyFilters(req.query);
@@ -330,7 +330,7 @@ router.get('/search', async (req,res) => {
             res.json({cards: searchReturn});
           }
     }catch(err){
-        res.json({message: err});
+        res.json({cards: []});
     }
 });
 //Returnes json {message: [Sets]}. All sets 
@@ -352,6 +352,7 @@ router.get('/keyruneCodes', async (req,res) => {
       res.json({message : err});
   }
 });
+//Returns the spesific set name based on the set code
 router.get('/setName', async (req,res) => {
   try{
       searchReturn = "";
