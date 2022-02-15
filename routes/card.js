@@ -530,9 +530,6 @@ function applyFilters(query) {
     if (query.hasAlternativeDeckLimit){
         searchReturn = searchReturn.where('hasAlternativeDeckLimit').equals(query.hasAlternativeDeckLimit);
     }
-    if (query.owned){
-        searchReturn = searchReturn.where('owned').gt(0);
-    }
     if (query.borderColor){
         searchReturn = searchReturn.where('borderColor').equals(query.borderColor);
     }
