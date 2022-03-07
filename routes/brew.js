@@ -73,7 +73,7 @@ router.get('/add', async (req,res) => {
             additionObject = additionObject ,{tags: req.query.tags};
         }
         if(req.query.DeckName && pass){
-            var newDeck = await SetList.exists({deck : req.query.DeckName});
+            var newDeck = await Brew.exists({deck : req.query.DeckName});
             if(!newDeck){
                 additionObject = additionObject ,{deck: req.query.DeckName};
                 res.json({message: "Success, " + req.query.name + " added to " + req.query.DeckName});

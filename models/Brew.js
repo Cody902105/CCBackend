@@ -38,7 +38,8 @@ const BrewSchema = mongoose.Schema({
         required : false
     },
     tags : {
-        type : {}
+        type : [String],
+        required :  false
     }
 });
 
