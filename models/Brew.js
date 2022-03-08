@@ -2,8 +2,14 @@ const mongoose = require('mongoose');
 
 const BrewSchema = mongoose.Schema({
     deck: {
-        type: String,
-        required: true
+        deck : {
+            type : String,
+            required : true    
+        },
+        user: {
+            type : String,
+            required : true    
+        }
     }, 
     meta : {
         format : String,

@@ -15,12 +15,15 @@ router.get('/create', async (req,res) => {
         if(req.query.format){
             formatName = req.query.format;
         }
-        if (req.query.DeckName){
+        if (req.query.DeckName && req.query.UserName){
             deckName = req.query.DeckName;
-            var newDeck = await SetList.exists({deck : deckName});
+            var newDeck = await SetList.exists({deck :{ deck : deckName, user : UserName}});
             if(!newDeck){
                 var some = Brew.create({
-                    deck: deckName,
+                    deck: {
+                        deck : deckName,
+                        user : UserName
+                    },
                     meta: {
                         format: formatName,
                         leader: leaderName
@@ -72,11 +75,11 @@ router.get('/add', async (req,res) => {
         if(req.query.tags){
             additionObject = additionObject ,{tags: req.query.tags};
         }
-        if(req.query.DeckName && pass){
-            var newDeck = await Brew.exists({deck : req.query.DeckName});
+        if(req.query.DeckName && pass && req.query.UserName){
+            var newDeck = await Brew.exists({deck : {deck : req.query.DeckName,user : UserName}});
             if(!newDeck){
-                additionObject = additionObject ,{deck: req.query.DeckName};
-                res.json({message: "Success, " + req.query.name + " added to " + req.query.DeckName});
+                additionObject = additionObject ,{deck : {deck : req.query.DeckName,user : UserName}};
+                res.json({message: "Success, " + req.query.name + " added to " + req.query.DeckName + " for user " + req.query.UserName});
             }else{
                 res.json({message: "Failed, deck does not exist"});
             }
@@ -90,28 +93,28 @@ router.get('/add', async (req,res) => {
 //removes a card from a deck
 router.get('/remove', async (req,res) => {
     try{
-        if(req.query.deckName){
+        if(req.query.deckName && req.query.UserName){
             if(req.query.uuid){
                 if(req.query.ammount){
-                    var found = await Brew.findOne({uuid: req.query.uuid, deck: req.query.DeckName});
+                    var found = await Brew.findOne({uuid: req.query.uuid, deck: {deck : req.query.DeckName, user : UserName}});
                     numberOf = found.ammount;
                     if(numberOf <= req.query.ammount){
-                        var some = await Brew.remove({uuid:req.query.uuid, deck: req.query.deckName});
+                        var some = await Brew.remove({uuid:req.query.uuid, deck: {deck : req.query.DeckName, user : UserName}});
                     }else{
                         numberToUpdate = numberOf - req.query.ammount;
-                        var some = await Brew.updateOne({uuid:req.query.uuid, deck: req.query.deckName},{ammount: numberToUpdate});
+                        var some = await Brew.updateOne({uuid:req.query.uuid, deck: {deck : req.query.DeckName, user : UserName}},{ammount: numberToUpdate});
                     }
                 }else{
-                    var some = await Brew.remove({uuid:req.query.uuid, deck: req.query.deckName});
+                    var some = await Brew.remove({uuid:req.query.uuid, deck: {deck : req.query.DeckName, user : UserName}});
                 }
             }
             if(req.query.name){
-                res.json({message: "Success, " + req.query.name + " removed from " + req.query.deckName});
+                res.json({message: "Success, " + req.query.name + " removed from " + req.query.deckName + " for user " + req.query.UserName});
             }else{
-                res.json({message: "Success, card removed from " + req.query.deckName});
+                res.json({message: "Success, card removed from " + req.query.deckName + " for user " + req.query.UserName});
             }
         }else{
-            res.json({message: "Failed, need a deckname"});
+            res.json({message: "Failed, need a Deckname and User"});
         }
     }catch(err){
         console.log(err);
