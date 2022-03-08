@@ -123,9 +123,9 @@ router.get('/remove', async (req,res) => {
 //removes a deck
 router.get('/removeDeck', async (req,res) => {
     try{
-        if(req.query.deckName){
-            var some = await Brew.remove({deck:req.query.DeckName});
-            res.json({message: "Success, removed " + req.query.deckName});
+        if(req.query.deckName && req.query.UserName){
+            var some = await Brew.remove({deck : {deck : req.query.DeckName, user : UserName}});
+            res.json({message: "Success, removed " + req.query.deckName + " for User " + req.query.UserName});
         }else{
             res.json({message: "Failed, need a deckname"});
         }
