@@ -32,12 +32,28 @@ const BrewSchema = mongoose.Schema({
         type: String,
         required : false
     },
-    imgUrl : {
+    imgID : {
         front: String,
         back: {
             type : String,
             required : false
         }
+    },
+    keyruneCode:{
+        type : String,
+        required: false
+    },
+    rarity:{
+        type : String,
+        required: false
+    },
+    cardType:{
+        type : String,
+        required: false
+    },
+    price:{
+        type : Number,
+        required: false
     },
     finishes: {
         type: [String],

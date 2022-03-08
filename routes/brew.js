@@ -56,6 +56,18 @@ router.get('/add', async (req,res) => {
         }else{
             pass = false;
         }
+        if (req.query.keyruneCode){
+            additionObject = additionObject ,{keyruneCode : req.query.keyruneCode};
+        }
+        if (req.query.rarity){
+            additionObject = additionObject ,{rarity : req.query.rarity};
+        }
+        if (req.query.cardType){
+            additionObject = additionObject ,{cardType : req.query.cardType};
+        }
+        if (req.query.price){
+            additionObject = additionObject ,{price : req.query.price};
+        }
         if(req.query.ammount){
             additionObject = additionObject ,{ammount: req.query.ammount};
         }else{
@@ -68,9 +80,9 @@ router.get('/add', async (req,res) => {
             additionObject = additionObject ,{finishes: req.query.finishes};
         }
         if(req.query.imgURLFront && req.query.imgURLBack){
-            additionObject = additionObject ,{imgUrl: { front : req.query.imgURLFront, back : req.query.imgURLBack}};
+            additionObject = additionObject ,{imgID: { front : req.query.imgURLFront, back : req.query.imgURLBack}};
         }else if(req.query.imgURLFront){
-            additionObject = additionObject ,{imgUrl: { front : req.query.imgURLFront}};
+            additionObject = additionObject ,{imgID: { front : req.query.imgURLFront}};
         }
         if(req.query.tags){
             additionObject = additionObject ,{tags: req.query.tags};
