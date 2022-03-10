@@ -1,6 +1,13 @@
 const mongoose = require('mongoose');
 
 const CardSchema = mongoose.Schema({
+    brew: {
+        type: [{
+            user : String,
+            deck : String
+        }],
+        required : false
+    },
     price: {
         type: Number,
         required : false
