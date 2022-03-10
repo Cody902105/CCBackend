@@ -465,6 +465,11 @@ function applyFilters(query) {
     }else if (query.text){
       searchReturn = Card.find({$text: {$search: query.text, $caseSensitive: false}});
     }
+    if(query.userName && query.deckName){
+        searchReturn = searchReturn.where('brew.deck').equals(query.deckName);
+        searchReturn = searchReturn.where('brew.user').equals(query.userName);
+        searchReturn = searchReturn.where('brew.ammount').gt(0);
+    }
     if (query.set){
         searchReturn = searchReturn.where('setCode').equals(query.set.toUpperCase());
     }
