@@ -2,11 +2,11 @@ const { query } = require('express');
 const express = require('express');
 const router = express.Router();
 const Brew = require('../models/Brew');
+const Card = require('../models/Card');
 
 //returns if the collection was created true / false
 router.get('/create', async (req,res) => {
     try{
-        deckName = '';
         formatName = '';
         leaderName = '';
         if(req.query.leader){
@@ -15,14 +15,13 @@ router.get('/create', async (req,res) => {
         if(req.query.format){
             formatName = req.query.format;
         }
-        if (req.query.DeckName && req.query.UserName){
-            deckName = req.query.DeckName;
-            var newDeck = await SetList.exists({deck :{ deck : deckName, user : UserName}});
+        if (req.query.deckName && req.query.userName){
+            var newDeck = await Brew.exists({deck :{ deck : req.query.deckName, user : req.query.userName}});
             if(!newDeck){
-                var some = Brew.create({
+                var some = await Brew.create({
                     deck: {
-                        deck : deckName,
-                        user : UserName
+                        deck : req.query.deckName,
+                        user : req.query.userName
                     },
                     meta: {
                         format: formatName,
@@ -54,5 +53,43 @@ router.get('/removeDeck', async (req,res) => {
         console.log(err);
     }
 });
-
+//updates a card to include data about decks and locations
+router.get('/add', async (req,res) => {
+    try{
+        var cardAmmount = 1;
+        if(req.query.deckName && req.query.userName && req.query.uuid){
+            if (req.query.ammount){
+                cardAmmount = req.query.ammount;
+            }
+            var deckExists = await Brew.exists({deck:{deck : req.query.deckName, user:req.query.userName}});
+            if(deckExists){
+                var CardExists = await Card.exists({uuid:req.query.uuid});
+                if(CardExists){
+                    var cardDeckstats = await Card.findOne({uuid:req.query.uuid},{brew:1, _id:0});
+                    pass = true;
+                    cardDeckstats["brew"].forEach(element => {
+                        if (element.user === req.query.userName && element.deck === req.query.deckName){
+                            pass = false;
+                        }
+                    });
+                    if(pass){
+                        cardDeckstats.brew.push({deck : req.query.deckName, user : req.query.userName, ammount : cardAmmount});
+                        var card = await Card.findOne({uuid:req.query.uuid},{deck:0});
+                        card["brew"] = cardDeckstats["brew"];
+                        var some = await Card.updateOne({uuid:req.query.uuid},card);
+                        res.json({message : "Card added"});
+                    }else{
+                        res.json({message: "card already in collection"});
+                    }
+                }
+            }else{
+                res.json({message : "deck doesn't exist, please create a deck first"});
+            }
+        }else{
+            res.json({message : "failed to add, must have deckname, username, and uuid"});
+        }
+    }catch(err){
+        console.log(err);
+    }
+});
 module.exports = router;

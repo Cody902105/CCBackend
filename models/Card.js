@@ -4,7 +4,9 @@ const CardSchema = mongoose.Schema({
     brew: {
         type: [{
             user : String,
-            deck : String
+            deck : String,
+            ammount : Number,
+            tags : [{}]
         }],
         required : false
     },
