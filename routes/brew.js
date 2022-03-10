@@ -43,11 +43,12 @@ router.get('/create', async (req,res) => {
 //removes a deck
 router.get('/removeDeck', async (req,res) => {
     try{
-        if(req.query.deckName && req.query.UserName){
-            var some = await Brew.remove({deck : {deck : req.query.DeckName, user : UserName}});
-            res.json({message: "Success, removed " + req.query.deckName + " for User " + req.query.UserName});
+        if(req.query.deckName && req.query.userName){
+            var some = await Brew.deleteOne({deck : {deck : req.query.deckName, user : req.query.userName}});
+            var removeOld = await Card.updateMany({deck : {deck : req.query.deckName, user : req.query.userName}},{$pull : {brew : {deck : req.query.deckName, user : req.query.userName}}});
+            res.json({message: "Success, removed " + req.query.deckName + " for User " + req.query.userName});
         }else{
-            res.json({message: "Failed, need a deckname"});
+            res.json({message: "Failed, need a deckName"});
         }
     }catch(err){
         console.log(err);
