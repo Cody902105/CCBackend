@@ -92,4 +92,22 @@ router.get('/add', async (req,res) => {
         console.log(err);
     }
 });
+//get all the collections based on a userName
+router.get('/get', async (req,res) => {
+    try{
+        if(req.query.userName){
+            var collections = await Brew.find({"deck.user" : req.query.userName}).exec();
+            var responseArr = [];
+            collections.forEach(element => {
+                responseArr.push(element.deck.deck);
+            });
+            res.json(responseArr);
+        }else{
+            res.json({message: "Must include username in query"});
+        }
+    }catch(err){
+        console.log(err);
+        res.json({message : err});
+    }
+});
 module.exports = router;
