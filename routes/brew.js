@@ -111,4 +111,19 @@ router.get('/get', async (req,res) => {
         res.json({message : err});
     }
 });
+//stats where you will get a list of deck stats WIP : 
+//color distribution (like devotional information)
+//spell types (ie creatures, artifacts, instants etc...)
+router.get('/stats', async (req,res) => {
+    try{
+        if(req.query.userName && req.query.deckName){
+            
+        }else{
+            res.json({message: "Must include userName in query and deckName"});
+        }
+    }catch(err){
+        console.log(err);
+        res.json({message : err});
+    }
+});
 module.exports = router;
