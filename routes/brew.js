@@ -117,7 +117,46 @@ router.get('/get', async (req,res) => {
 router.get('/stats', async (req,res) => {
     try{
         if(req.query.userName && req.query.deckName){
-            
+            var cardCount = await Card.count({brew : {deck : req.query.deckName, user : req.query.userName}});
+            var cards = await Card.find({brew : {deck : req.query.deckName, user : req.query.userName}});
+            pips = {
+                white : 0,
+                blue : 0,
+                black : 0,
+                red : 0,
+                green : 0,
+                colourless : 0
+            }
+            cards.forEach(card => {
+                cards.manaCost.forEach(letter => {
+                    switch (letter){
+                        case 'W':
+                            pips.white++;
+                            break;
+                        case 'U': 
+                            pips.blue++;
+                            break;
+                        case 'B':
+                            pips.black++;
+                            break;
+                        case 'R':
+                            pips.red++;
+                            break;
+                        case 'G':
+                            pips.green++;
+                            break;
+                        case 'C':
+                            pips.colourless++;
+                            break;
+                        default:
+                            break;
+                    }
+                });
+            });
+            res.json({'stats' : {
+                'cardCount' : cardCount,
+                'pips' : pips
+            }});
         }else{
             res.json({message: "Must include userName in query and deckName"});
         }
