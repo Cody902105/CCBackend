@@ -127,6 +127,7 @@ router.get('/stats', async (req,res) => {
                 green : 0,
                 colourless : 0
             }
+            manaValue = 0;
             cards.forEach(card => {
                 cards.manaCost.forEach(letter => {
                     switch (letter){
@@ -152,10 +153,13 @@ router.get('/stats', async (req,res) => {
                             break;
                     }
                 });
+                manaValue = manaValue + card.manaValue;
             });
+            avgManaValue = manaValue / cardCount;
             res.json({'stats' : {
                 'cardCount' : cardCount,
-                'pips' : pips
+                'pips' : pips,
+                'averageCost' : avgManaValue
             }});
         }else{
             res.json({message: "Must include userName in query and deckName"});
