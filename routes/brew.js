@@ -155,7 +155,9 @@ router.get('/stats', async (req,res) => {
                 });
                 manaValue = manaValue + card.manaValue;
             });
-            avgManaValue = manaValue / cardCount;
+            if(cardCount != 0){
+                avgManaValue = manaValue / cardCount;
+            }
             res.json({'stats' : {
                 'cardCount' : cardCount,
                 'pips' : pips,
