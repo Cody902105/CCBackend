@@ -111,6 +111,14 @@ router.get('/get', async (req,res) => {
         res.json({message : err});
     }
 });
+//decrese the ammount of a card or remove a card
+router.get('/remove', async (req,res) => {
+    try{
+
+    }catch(err){
+        console.log(err);
+    }
+});
 //stats where you will get a list of deck stats WIP : 
 //color distribution (like devotional information)
 //spell types (ie creatures, artifacts, instants etc...)
