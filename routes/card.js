@@ -469,6 +469,9 @@ function applyFilters(query) {
         searchReturn = searchReturn.where('brew.deck').equals(query.deckName);
         searchReturn = searchReturn.where('brew.user').equals(query.userName);
         searchReturn = searchReturn.where('brew.ammount').gt(0);
+    }else if(query.userName && query.owned){
+        searchReturn = searchReturn.where('brew.user').equals(query.userName);
+        searchReturn = searchReturn.where('brew.ammount').gt(0);
     }
     if (query.set){
         searchReturn = searchReturn.where('setCode').equals(query.set.toUpperCase());
