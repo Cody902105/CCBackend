@@ -43,10 +43,10 @@ router.get('/exc', async (req,res) =>{
                 for (const Sets in body.data){
                     var newSet = await SetList.exists({code : body.data[Sets]["code"]});
                     if (!newSet){
-                        var some = await SetList.create(body.data[Sets]);
+                        await SetList.create(body.data[Sets]);
                         newSets++;
                     }else{
-                        var some = await SetList.updateOne({code : body.data[Sets]["code"]},{$set:body.data[Sets]});
+                        await SetList.updateOne({code : body.data[Sets]["code"]},{$set:body.data[Sets]});
                         updatedSets++;
                     }
                 }
@@ -62,6 +62,7 @@ router.get('/exc', async (req,res) =>{
                     const needUpdate = await Info.exists({version: body.meta.version});
                     if (!needUpdate) {
                         console.log("Begining Update Process");
+                        var currentCardList = [];
                         var updatedCards = 0;
                         var newCards = 0;
                         var newVersion = await Info.create(body.meta);
@@ -69,14 +70,16 @@ router.get('/exc', async (req,res) =>{
                             for (const card in body.data[sets]["cards"]){
                                 var NewCard = await Card.exists({uuid : body.data[sets]["cards"][card].uuid});
                                 if (!NewCard){
-                                    var some = await Card.create(body.data[sets]["cards"][card]);
+                                    await Card.create(body.data[sets]["cards"][card]);
                                     newCards++;
                                 }else{
-                                    var some = await Card.updateOne({uuid : body.data[sets]["cards"][card].uuid},{$set:body.data[sets]["cards"][card]});
+                                    await Card.updateOne({uuid : body.data[sets]["cards"][card].uuid},{$set:body.data[sets]["cards"][card]});
                                     updatedCards++;
                                 }
+                                currentCardList.push(body.data[sets]["cards"][card].uuid);
                             }
                         }
+                        await Card.deleteMany({uuid : {$ne : currentCardList}})
                         const total = newCards+updatedCards;
                         console.log("Update Compleate. " + newCards +" New, " + updatedCards +" Updated, " + total + " Total");
                         res.json({
@@ -125,20 +128,20 @@ router.get('/prices', async (req,res) =>{
                 if(ThisCardJson[cardUUID]["paper"] !== undefined){
                     if(ThisCardJson[cardUUID]["paper"]["cardkingdom"] !== undefined){
                         var cardPrice = getPrice(ThisCardJson[cardUUID]["paper"]["cardkingdom"]);
-                        var some = await Card.updateOne({uuid : cardUUID},{price : cardPrice});
+                        await Card.updateOne({uuid : cardUUID},{price : cardPrice});
                         count++;
                     }else if(ThisCardJson[cardUUID]["paper"]["cardmarket"] !== undefined){
                         var cardPrice = getPrice(ThisCardJson[cardUUID]["paper"]["cardmarket"]);
-                        var some = await Card.updateOne({uuid : cardUUID},{price : cardPrice});
+                        await Card.updateOne({uuid : cardUUID},{price : cardPrice});
                         count++;
                     }else if(ThisCardJson[cardUUID]["paper"]["tcgplayer"] !== undefined){
                         var cardPrice = getPrice(ThisCardJson[cardUUID]["paper"]["tcgplayer"]);
-                        var some = await Card.updateOne({uuid : cardUUID},{price : cardPrice});
+                        await Card.updateOne({uuid : cardUUID},{price : cardPrice});
                         count++;
                     }
                 }else if(ThisCardJson[cardUUID]["mtgo"]["cardhoarder"] !== undefined){
                     var cardPrice = getPrice(ThisCardJson[cardUUID]["mtgo"]["cardhoarder"]);
-                    var some = await Card.updateOne({uuid : cardUUID},{price : cardPrice});
+                    await Card.updateOne({uuid : cardUUID},{price : cardPrice});
                     count++;
                 }
             }
