@@ -1,3 +1,4 @@
+const e = require('connect-timeout');
 const { query } = require('express');
 const express = require('express');
 const router = express.Router();
@@ -18,7 +19,7 @@ router.get('/create', async (req,res) => {
         if (req.query.deckName && req.query.userName){
             var newDeck = await Brew.exists({deck :{ deck : req.query.deckName, user : req.query.userName}});
             if(!newDeck){
-                var some = await Brew.create({
+                await Brew.create({
                     deck: {
                         deck : req.query.deckName,
                         user : req.query.userName
@@ -68,19 +69,26 @@ router.get('/add', async (req,res) => {
                 if(CardExists){
                     var cardDeckstats = await Card.findOne({uuid:req.query.uuid},{brew:1, _id:0});
                     pass = true;
+                    elementCount = -1;
                     cardDeckstats["brew"].forEach(element => {
                         if (element.user === req.query.userName && element.deck === req.query.deckName){
                             pass = false;
+                            elementCount++;
                         }
                     });
                     if(pass){
                         cardDeckstats.brew.push({deck : req.query.deckName, user : req.query.userName, ammount : cardAmmount});
-                        var card = await Card.findOne({uuid:req.query.uuid},{deck:0});
+                        var card = await Card.findOne({uuid:req.query.uuid},{brew:0});
                         card["brew"] = cardDeckstats["brew"];
-                        var some = await Card.updateOne({uuid:req.query.uuid},card);
+                        await Card.updateOne({uuid:req.query.uuid},card);
                         res.json({message : "Card added"});
                     }else{
-                        res.json({message: "card already in collection"});
+                        cardAmmount++;
+                        cardDeckstats.brew[elementCount] = {deck : req.query.deckName, user : req.query.userName, ammount : cardAmmount};
+                        var card = await Card.findOne({uuid:req.query.uuid},{brew:0});
+                        card["brew"] = cardDeckstats["brew"];
+                        await Card.updateOne({uuid:req.query.uuid},card);
+                        res.json({message: "card already in collection/deck adding additional"});
                     }
                 }
             }else{
