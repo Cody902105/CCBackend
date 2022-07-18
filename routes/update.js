@@ -108,48 +108,44 @@ router.get('/prices', async (req,res) =>{
     //this is where pricing will be
     console.log("Begining pricing update");
     try{
-        //Begining update Prices
-        const jsonPrices = fs.readFileSync("./AllPrices.json");
-        //Initial step is past the meta and other data
-        var step = 71;
-        var count = 0;
-        var totalCount = 0;
-        //We are finding the index if the next end of object
-        while (jsonPrices.indexOf('}}}}}', step) < (jsonPrices.length - 7)){
-            //We add 6 so we get the total end of object and parse to JSON
-            var nextStep = jsonPrices.indexOf('}}}}}', step) + 6;
-            var ThisCardbuf = jsonPrices.slice(step,nextStep-1);
-            var ThisCardstr = ThisCardbuf.toString();
-            var ThisCardJson = JSON.parse("{"+ThisCardstr+"}");
-            var cardUUID = Object.keys(ThisCardJson)[0];
-            var cardExists = await Card.exists({uuid: cardUUID});
-            //So we can compare the total documents in the file
-            totalCount++;
-            if (cardExists){
-                if(ThisCardJson[cardUUID]["paper"] !== undefined){
-                    if(ThisCardJson[cardUUID]["paper"]["cardkingdom"] !== undefined){
-                        var cardPrice = getPrice(ThisCardJson[cardUUID]["paper"]["cardkingdom"]);
-                        await Card.updateOne({uuid : cardUUID},{price : cardPrice});
-                        count++;
-                    }else if(ThisCardJson[cardUUID]["paper"]["cardmarket"] !== undefined){
-                        var cardPrice = getPrice(ThisCardJson[cardUUID]["paper"]["cardmarket"]);
-                        await Card.updateOne({uuid : cardUUID},{price : cardPrice});
-                        count++;
-                    }else if(ThisCardJson[cardUUID]["paper"]["tcgplayer"] !== undefined){
-                        var cardPrice = getPrice(ThisCardJson[cardUUID]["paper"]["tcgplayer"]);
-                        await Card.updateOne({uuid : cardUUID},{price : cardPrice});
-                        count++;
+        var failedPrice = 0;
+        var successPrice = 0;
+        theSets = await SetList.find({});
+        for (const Sets in theSets){
+            var Cards = await Card.find({setCode : theSets[Sets]["code"]});
+            for (const card in Cards){
+                setTimeout(function () {
+                    if (Cards[card] != undefined) {
+                        if (Cards[card]["identifiers"]["scryfallId"] != null) {
+                            request('https://api.scryfall.com/cards/' + Cards[card]["identifiers"]["scryfallId"], { json: true , Connection: "keep-alive"}, (scryErr, scryResR, scryBody) => {
+                                if (scryErr) {
+                                    //console.log(scryErr);
+                                } else {
+                                    if (scryBody != undefined && Cards[card] != undefined) {
+                                        if (scryBody["prices"]["eur"] != null) {
+                                            Card.updateOne({ uuid: Cards[card]["uuid"] }, { price: scryBody["prices"]["eur"] });
+                                            successPrice++;
+                                        } else if (scryBody["prices"]["eur_foil"] != null) {
+                                            Card.updateOne({ uuid: Cards[card]["uuid"] }, { price: scryBody["prices"]["eur_foil"] });
+                                            successPrice++;
+                                        } else if (scryBody["prices"]["tix"] != null) {
+                                            Card.updateOne({ uuid: Cards[card]["uuid"] }, { price: scryBody["prices"]["tix"] });
+                                            successPrice++;
+                                        } else {
+                                            failedPrice++;
+                                        }
+                                    } else {
+                                        failedPrice++;
+                                    }
+                                }
+                            });
+                        }
                     }
-                }else if(ThisCardJson[cardUUID]["mtgo"]["cardhoarder"] !== undefined){
-                    var cardPrice = getPrice(ThisCardJson[cardUUID]["mtgo"]["cardhoarder"]);
-                    await Card.updateOne({uuid : cardUUID},{price : cardPrice});
-                    count++;
-                }
+                }, 50);
             }
-            step = nextStep;
-        } 
-        console.log('Card prices Updated: ' + count + ', Total Cards: ' + totalCount);
-        res.json({message: ' Cards prices updated ' + count});
+        }
+        console.log("Prices Updated " + successPrice + " found prices, " + failedPrice + " failed prices");
+        res.json({message: "Prices Updated"})
     }catch(bigbaderr){
         console.log('Prices Failed to update: ' + bigbaderr);
         res.json({message: bigbaderr});
