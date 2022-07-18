@@ -45,8 +45,8 @@ router.get('/create', async (req,res) => {
 router.get('/removeDeck', async (req,res) => {
     try{
         if(req.query.deckName && req.query.userName){
-            var some = await Brew.deleteOne({deck : {deck : req.query.deckName, user : req.query.userName}});
-            var removeOld = await Card.updateMany({deck : {deck : req.query.deckName, user : req.query.userName}},{$pull : {brew : {deck : req.query.deckName, user : req.query.userName}}});
+            await Brew.deleteOne({deck : {deck : req.query.deckName, user : req.query.userName}});
+            await Card.updateMany({deck : {deck : req.query.deckName, user : req.query.userName}},{$pull : {brew : {deck : req.query.deckName, user : req.query.userName}}});
             res.json({message: "Success, removed " + req.query.deckName + " for User " + req.query.userName});
         }else{
             res.json({message: "Failed, need a deckName"});
@@ -83,7 +83,8 @@ router.get('/add', async (req,res) => {
                         await Card.updateOne({uuid:req.query.uuid},card);
                         res.json({message : "Card added"});
                     }else{
-                        cardAmmount++;
+                        currentAmmount = cardDeckstats.brew[elementCount]["ammount"];
+                        cardAmmount = cardAmmount + currentAmmount;
                         cardDeckstats.brew[elementCount] = {deck : req.query.deckName, user : req.query.userName, ammount : cardAmmount};
                         var card = await Card.findOne({uuid:req.query.uuid},{brew:0});
                         card["brew"] = cardDeckstats["brew"];
@@ -98,6 +99,7 @@ router.get('/add', async (req,res) => {
             res.json({message : "failed to add, must have deckname, username, and uuid"});
         }
     }catch(err){
+        res.json({message: "An error has occured"});
         console.log(err);
     }
 });
@@ -122,8 +124,52 @@ router.get('/get', async (req,res) => {
 //decrese the ammount of a card or remove a card
 router.get('/remove', async (req,res) => {
     try{
-
+        var cardAmmount = 1;
+        if(req.query.deckName && req.query.userName && req.query.uuid){
+            if (req.query.ammount){
+                cardAmmount = req.query.ammount;
+            }
+            var deckExists = await Brew.exists({deck:{deck : req.query.deckName, user:req.query.userName}});
+            if(deckExists){
+                var CardExists = await Card.exists({uuid:req.query.uuid});
+                if(CardExists){
+                    var cardDeckstats = await Card.findOne({uuid:req.query.uuid},{brew:1, _id:0});
+                    pass = true;
+                    elementCount = -1;
+                    cardDeckstats["brew"].forEach(element => {
+                        if (element.user === req.query.userName && element.deck === req.query.deckName){
+                            pass = false;
+                            elementCount++;
+                        }
+                    });
+                    if(pass){
+                        res.json({message : "Cannot remove card, not in collection"});
+                    }else{
+                        currentAmmount = cardDeckstats.brew[elementCount]["ammount"];
+                        cardAmmount = currentAmmount - cardAmmount;
+                        if (cardAmmount <= 0){
+                            cardDeckstats.brew.splice(elementCount,1);
+                            var card = await Card.findOne({uuid:req.query.uuid},{brew:0});
+                            card["brew"] = cardDeckstats["brew"];
+                            await Card.updateOne({uuid:req.query.uuid},card);
+                            res.json({message: "card already in collection/deck subtracting additional"});
+                        }else{
+                            cardDeckstats.brew[elementCount] = {deck : req.query.deckName, user : req.query.userName, ammount : cardAmmount};
+                            var card = await Card.findOne({uuid:req.query.uuid},{brew:0});
+                            card["brew"] = cardDeckstats["brew"];
+                            await Card.updateOne({uuid:req.query.uuid},card);
+                            res.json({message: "card already in collection/deck removing Card"});
+                        }
+                    }
+                }
+            }else{
+                res.json({message : "deck doesn't exist, please create a deck first"});
+            }
+        }else{
+            res.json({message : "failed to add, must have deckname, username, and uuid"});
+        }
     }catch(err){
+        res.json({message: "An error has occured"});
         console.log(err);
     }
 });
