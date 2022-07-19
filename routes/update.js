@@ -122,21 +122,25 @@ router.get('/prices', async (req,res) =>{
                                     //console.log(scryErr);
                                 } else {
                                     if (scryBody != undefined && Cards[card] != undefined) {
-                                        if (scryBody["prices"]["eur"] != null) {
-                                            Card.updateOne({ uuid: Cards[card]["uuid"] }, { price: scryBody["prices"]["eur"] });
-                                            successPrice++;
-                                        } else if (scryBody["prices"]["eur_foil"] != null) {
-                                            Card.updateOne({ uuid: Cards[card]["uuid"] }, { price: scryBody["prices"]["eur_foil"] });
-                                            successPrice++;
-                                        } else if (scryBody["prices"]["usd"] != null) {
-                                            Card.updateOne({ uuid: Cards[card]["uuid"] }, { price: scryBody["prices"]["usd" * 1.02] });
-                                            successPrice++;
-                                        } else if (scryBody["prices"]["usd_foil"] != null) {
-                                            Card.updateOne({ uuid: Cards[card]["uuid"] }, { price: scryBody["prices"]["usd_foil"] * 1.02});
-                                            successPrice++;
-                                        } else if (scryBody["prices"]["tix"] != null) {
-                                            Card.updateOne({ uuid: Cards[card]["uuid"] }, { price: scryBody["prices"]["tix"] });
-                                            successPrice++;
+                                        if (scryBody["prices"] != undefined){
+                                            if (scryBody["prices"]["eur"] != null) {
+                                                Card.updateOne({ uuid: Cards[card]["uuid"] }, { price: scryBody["prices"]["eur"] });
+                                                successPrice++;
+                                            } else if (scryBody["prices"]["eur_foil"] != null) {
+                                                Card.updateOne({ uuid: Cards[card]["uuid"] }, { price: scryBody["prices"]["eur_foil"] });
+                                                successPrice++;
+                                            } else if (scryBody["prices"]["usd"] != null) {
+                                                Card.updateOne({ uuid: Cards[card]["uuid"] }, { price: scryBody["prices"]["usd" * 1.02] });
+                                                successPrice++;
+                                            } else if (scryBody["prices"]["usd_foil"] != null) {
+                                                Card.updateOne({ uuid: Cards[card]["uuid"] }, { price: scryBody["prices"]["usd_foil"] * 1.02});
+                                                successPrice++;
+                                            } else if (scryBody["prices"]["tix"] != null) {
+                                                Card.updateOne({ uuid: Cards[card]["uuid"] }, { price: scryBody["prices"]["tix"] });
+                                                successPrice++;
+                                            } else {
+                                                failedPrice++;
+                                            }
                                         } else {
                                             failedPrice++;
                                         }
