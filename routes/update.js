@@ -83,6 +83,7 @@ router.get('/exc', async (req,res) =>{
                         console.log("Update Compleate. " + newCards +" New, " + updatedCards +" Updated, " + total + " Total");
                         console.log("Deleting Redundant Cards");
                         await Card.deleteMany({uuid : {$ne : currentCardList}});
+                        console.log("Update Compleate");
                         res.json({
                             Updated: updatedCards,
                             New: newCards,
