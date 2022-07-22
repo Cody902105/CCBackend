@@ -37,7 +37,7 @@ router.get('/exc', async (req,res) =>{
             if (err){
                 return console.log(err);
             }else{
-                console.log("Updating Sets")
+                console.log("Updating Sets");
                 var newSets = 0;
                 var updatedSets = 0;
                 for (const Sets in body.data){
