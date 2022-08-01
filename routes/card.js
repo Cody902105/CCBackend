@@ -146,7 +146,7 @@ router.get('/', async (req,res) =>{
     }
 });
 //Returnes Promise based on posted card, Will update if the card already exists
-router.get('/', async (req,res) => {
+router.post('/', async (req,res) => {
     const postCard = new Card({
         artist : req.body.artist,
         asciiName : req.body.asciiName,

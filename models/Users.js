@@ -15,4 +15,4 @@ const UsersSchema = mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model('Brew', UsersSchema);
+module.exports = mongoose.model('Users', UsersSchema);

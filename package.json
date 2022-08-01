@@ -9,6 +9,7 @@
   "author": "Cody Gaydon",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^5.0.1",
     "body-parser": "^1.19.2",
     "connect-timeout": "^1.9.0",
     "cors": "^2.8.5",
