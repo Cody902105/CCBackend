@@ -3,14 +3,6 @@ const router = express.Router();
 const Users = require('../models/Users');
 const bcrypt = require('bcrypt');
 
-router.get('/', async (req,res) =>{
-    try{
-        
-    }catch(err){
-        res.json({message:err});
-    }
-});
-
 router.post('/', async (req,res) =>{
     try{
         const userName = req.body.userName;
@@ -37,7 +29,6 @@ router.post('/', async (req,res) =>{
         res.status(500).json({message:err});
     }
 });
-
 router.post('/login', async (req,res) => {
     const userName = req.body.userName;
     const password = req.body.password;
@@ -53,6 +44,32 @@ router.post('/login', async (req,res) => {
             }
         }else{
             res.status(201).json({message:"bad username"});
+        }
+    }catch(err){
+        res.status(500).json({message:err});
+    }
+});
+router.post('/changepassword', async (req,res) =>{
+    try{
+        const userName = req.body.userName;
+        const email = req.body.email;
+        const oldPassword = req.body.oldPassword;
+        const newPassword = req.body.newPassword;
+        const userCheck = await Users.exists({userName : userName});
+        const emailCheck =  await Users.exists({email : email});
+        if (userCheck && emailCheck){
+            var User = await Users.findOne({userName : userName, email : email})
+            const passCheck = await bcrypt.compare(oldPassword,User.password);
+            if(passCheck){
+                const hashPass = await bcrypt.hash(newPassword,10);
+                User.password = hashPass;
+                await Users.updateOne({userName : userName, email : email},User);
+                res.status(200).json({message:"Password Changed"});
+            }else{
+                res.status(201).json({message:"access denied"});
+            }
+        }else{
+            res.status(201).json({message:"User doesn't exist"});
         }
     }catch(err){
         res.status(500).json({message:err});
