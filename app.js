@@ -12,6 +12,7 @@ const cardRoute = require('./routes/card');
 const updateRoute = require('./routes/update');
 const brewRoute = require('./routes/brew.js');
 const rollRoute = require('./routes/roll.js');
+const users = require('./routes/users.js');
 
 //Middleware
 app.use(cors());
