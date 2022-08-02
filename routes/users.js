@@ -75,4 +75,24 @@ router.post('/changepassword', async (req,res) =>{
         res.status(500).json({message:err});
     }
 });
+router.post('/resetpassword', async (req,res) =>{
+    try{
+        const userName = req.body.userName;
+        const email = req.body.email;
+        const newPassword = req.body.newPassword;
+        const userCheck = await Users.exists({userName : userName});
+        const emailCheck =  await Users.exists({email : email});
+        if (userCheck && emailCheck){
+            var User = await Users.findOne({userName : userName, email : email})
+            const hashPass = await bcrypt.hash(newPassword,10);
+            User.password = hashPass;
+            await Users.updateOne({userName : userName, email : email},User);
+            res.status(200).json({message:"Password Changed"});
+        }else{
+            res.status(201).json({message:"User doesn't exist"});
+        }
+    }catch(err){
+        res.status(500).json({message:err});
+    }
+});
 module.exports = router;
