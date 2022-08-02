@@ -12,6 +12,7 @@ const cardRoute = require('./routes/card');
 const updateRoute = require('./routes/update');
 const brewRoute = require('./routes/brew.js');
 const rollRoute = require('./routes/roll.js');
+const usersRoute = require('./routes/users.js');
 
 //Middleware
 app.use(cors());
@@ -22,6 +23,7 @@ app.use('/update', timeout(36000000));
 app.use('/update', updateRoute);
 app.use('/brew', brewRoute);
 app.use('/roll', rollRoute);
+app.use('/users', usersRoute);
 
 //Connect to database
 mongoose.connect(process.env.DATABASE_CONNECTION_STRING, () => {
