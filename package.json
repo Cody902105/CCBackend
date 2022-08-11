@@ -4,7 +4,8 @@
   "description": "Here are the dependencies of the system",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon app.js"
+    "dev-start": "nodemon app.js",
+    "start": "node app.js"
   },
   "author": "Cody Gaydon",
   "license": "ISC",
