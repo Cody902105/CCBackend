@@ -56,7 +56,7 @@ router.get('/removeDeck', async (req,res) => {
     }
 });
 //updates a card to include data about decks and locations
-router.post('/add', async (req,res) => {
+router.get('/add', async (req,res) => {
     try{
         var cardAmmount = 1;
         if(req.query.deckName && req.query.userName && req.query.uuid){
@@ -152,13 +152,13 @@ router.get('/remove', async (req,res) => {
                             var card = await Card.findOne({uuid:req.query.uuid},{brew:0});
                             card["brew"] = cardDeckstats["brew"];
                             await Card.updateOne({uuid:req.query.uuid},card);
-                            res.json({message: "card already in collection/deck subtracting additional"});
+                            res.json({message: "card already in collection/deck removing Card"});
                         }else{
                             cardDeckstats.brew[elementCount] = {deck : req.query.deckName, user : req.query.userName, ammount : cardAmmount};
                             var card = await Card.findOne({uuid:req.query.uuid},{brew:0});
                             card["brew"] = cardDeckstats["brew"];
                             await Card.updateOne({uuid:req.query.uuid},card);
-                            res.json({message: "card already in collection/deck removing Card"});
+                            res.json({message: "card already in collection/deck subtracting additional"});
                         }
                     }
                 }
