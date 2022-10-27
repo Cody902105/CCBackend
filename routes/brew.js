@@ -56,7 +56,7 @@ router.get('/removeDeck', async (req,res) => {
     }
 });
 //updates a card to include data about decks and locations
-router.get('/add', async (req,res) => {
+router.post('/add', async (req,res) => {
     try{
         var cardAmmount = 1;
         if(req.query.deckName && req.query.userName && req.query.uuid){
