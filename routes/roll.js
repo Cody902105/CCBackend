@@ -15,7 +15,7 @@ router.get('/flip', async (req,res) => {
         }
         if (req.query.untill_loss){
             var intStop = 0;
-            while (intStop == 0){
+            while (intStop == 0 && intWins <= 9999){
                 var intWin = 0
                 for (let i = 0; i < 2 ** thumbs; i++) {
                     if (Math.round(Math.random()) == 1){
